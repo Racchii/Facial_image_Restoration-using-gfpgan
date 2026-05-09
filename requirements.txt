@@ -5,10 +5,10 @@ opencv-python-headless
 facexlib
 gfpgan
 
-# Critical: Install basicsr this way
-basicsr @ git+https://github.com/XPixelGroup/BasicSR.git --no-build-isolation
+# Install basicsr from source
+basicsr @ git+https://github.com/XPixelGroup/BasicSR.git
 
-# PyTorch CPU
+# PyTorch CPU version
 torch
 torchvision
 torchaudio
