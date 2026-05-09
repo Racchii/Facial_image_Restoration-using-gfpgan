@@ -2,11 +2,13 @@ flask
 gunicorn
 opencv-python-headless
 numpy
-gfpgan
-basicsr
 facexlib
+gfpgan
 
-# PyTorch CPU version (separate line)
+# Install basicsr from GitHub (fixes the build error)
+basicsr @ git+https://github.com/XPixelGroup/BasicSR.git
+
+# PyTorch CPU version (lighter for Render free plan)
 torch
 torchvision
 torchaudio
