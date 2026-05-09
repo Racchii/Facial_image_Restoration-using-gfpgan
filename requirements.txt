@@ -1,14 +1,14 @@
 flask
 gunicorn
-opencv-python-headless
 numpy
+opencv-python-headless
 facexlib
 gfpgan
 
-# Install basicsr from GitHub (most reliable method)
-basicsr @ git+https://github.com/XPixelGroup/BasicSR.git
+# Critical: Install basicsr this way
+basicsr @ git+https://github.com/XPixelGroup/BasicSR.git --no-build-isolation
 
-# PyTorch CPU version
+# PyTorch CPU
 torch
 torchvision
 torchaudio
