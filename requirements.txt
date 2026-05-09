@@ -1,0 +1,8 @@
+flask
+gunicorn
+opencv-python-headless
+numpy
+gfpgan
+basicsr
+facexlib
+torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu

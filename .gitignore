@@ -1,0 +1,7 @@
+gfpgan/weights/
+*.pth
+uploads/
+static/output/
+__pycache__/
+*.pyc
+.DS_Store

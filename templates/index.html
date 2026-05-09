@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GFPGAN - AI Face Restoration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 50px 30px 30px;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .content {
+            padding: 40px 60px;
+        }
+
+        .upload-area {
+            border: 3px dashed #00dbde;
+            border-radius: 20px;
+            padding: 60px 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            background: rgba(0, 219, 222, 0.1);
+            border-color: #fc00ff;
+        }
+
+        .preview-img {
+            max-height: 420px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .result-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .btn-restore {
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            border: none;
+            padding: 16px 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .btn-restore:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(252, 0, 255, 0.4);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .comparison {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="#">GFPGAN</a>
+            <span class="text-light">AI-Powered Face Restoration</span>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <div class="main-container">
+                
+                <!-- Header -->
+                <div class="header">
+                    <h1 class="title">Face Restoration</h1>
+                    <p class="subtitle">Advanced AI that brings old, blurry, and damaged faces back to life</p>
+                </div>
+
+                <div class="content">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <!-- Upload Section -->
+                            <div class="col-lg-6">
+                                <h4 class="mb-3 text-light"><i class="fas fa-image"></i> Upload Your Image</h4>
+                                <div class="upload-area" id="uploadArea">
+                                    <input type="file" name="file" id="fileInput" accept="image/*" hidden>
+                                    <div id="uploadContent">
+                                        <i class="fas fa-cloud-upload-alt fa-4x mb-3 text-info"></i>
+                                        <h5>Drag & Drop or Click to Upload</h5>
+                                        <p class="text-muted">Supported: JPG, PNG, WebP</p>
+                                    </div>
+                                    <img id="originalPreview" class="preview-img" style="display: none; max-width: 100%;">
+                                </div>
+                            </div>
+
+                            <!-- Result Section -->
+                            <div class="col-lg-6">
+                                <h4 class="mb-3 text-light"><i class="fas fa-magic"></i> Restored Result</h4>
+                                <div class="result-card" id="resultCard">
+                                    <div id="resultContent">
+                                        <div class="text-center py-5 text-muted">
+                                            <i class="fas fa-image fa-4x mb-3"></i>
+                                            <p>Restored image will appear here</p>
+                                        </div>
+                                    </div>
+                                    <img id="restoredPreview" class="preview-img w-100" style="display: none;">
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <button type="submit" id="submitBtn" class="btn btn-restore text-white w-100">
+                                        <i class="fas fa-magic"></i> Restore Face Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Loading -->
+                    <div id="loading" class="loading">
+                        <div class="spinner-border text-info mb-4" style="width: 4.5rem; height: 4.5rem;"></div>
+                        <h4>GFPGAN is restoring the face...</h4>
+                        <p class="text-muted">This may take 15–45 seconds because you're running on CPU</p>
+                    </div>
+
+                    <!-- Download Button -->
+                    <div class="text-center mt-4">
+                        <a id="downloadBtn" href="#" class="btn btn-success btn-lg px-5" style="display: none;" download>
+                            <i class="fas fa-download"></i> Download Restored Image
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const uploadArea = document.getElementById('uploadArea');
+const originalPreview = document.getElementById('originalPreview');
+const restoredPreview = document.getElementById('restoredPreview');
+const downloadBtn = document.getElementById('downloadBtn');
+const loading = document.getElementById('loading');
+const resultCard = document.getElementById('resultCard');
+const submitBtn = document.getElementById('submitBtn');
+
+uploadArea.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            originalPreview.src = ev.target.result;
+            originalPreview.style.display = 'block';
+            document.getElementById('uploadContent').style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    
+    loading.style.display = 'block';
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch('/', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            restoredPreview.src = data.restored_url;
+            restoredPreview.style.display = 'block';
+            downloadBtn.href = data.restored_url;
+            downloadBtn.style.display = 'inline-block';
+        } else {
+            alert('Error: ' + (data.error || 'Failed to restore image'));
+        }
+    } catch (err) {
+        alert('Connection error. Make sure the server is running.');
+    } finally {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+});
+</script>
+</body>
+</html>
