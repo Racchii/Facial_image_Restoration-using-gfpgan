@@ -5,10 +5,10 @@ numpy
 facexlib
 gfpgan
 
-# Install basicsr from GitHub (fixes the build error)
+# Install basicsr from GitHub (most reliable method)
 basicsr @ git+https://github.com/XPixelGroup/BasicSR.git
 
-# PyTorch CPU version (lighter for Render free plan)
+# PyTorch CPU version
 torch
 torchvision
 torchaudio
