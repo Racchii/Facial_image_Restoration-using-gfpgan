@@ -5,4 +5,8 @@ numpy
 gfpgan
 basicsr
 facexlib
-torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# PyTorch CPU version (separate line)
+torch
+torchvision
+torchaudio
